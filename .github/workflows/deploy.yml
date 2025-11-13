@@ -80,5 +80,4 @@ jobs:
 
             echo "=== Verifying deployment in webapps ==="
             ls -lh /var/lib/tomcat10/webapps/
-:wq:%wq
 
