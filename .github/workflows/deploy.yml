@@ -1,0 +1,84 @@
+name: CI/CD Deploy Java App to Tomcat10 on EC2
+
+# Trigger deployment on push to master branch
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout your repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Setup Java 17
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # 3. Build WAR file
+      - name: Build WAR file
+        run: mvn clean package -DskipTests
+
+      # 4. Verify WAR file exists and copy to ROOT.war
+      - name: Prepare WAR file
+        run: |
+          WAR_FILE=$(ls target/*.war | head -1)
+          if [ ! -f "$WAR_FILE" ]; then
+            echo "ERROR: WAR file not found!"
+            exit 1
+          fi
+          cp "$WAR_FILE" ./ROOT.war
+          echo "WAR file ready: ./ROOT.war"
+
+      # 5. Create SSH key file
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # 6. Upload WAR to EC2
+      - name: Upload WAR to EC2
+        run: |
+          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ./ROOT.war ubuntu@${{ secrets.EC2_HOST }}:/tmp/ROOT.war
+
+      # 7. Deploy WAR on Tomcat
+      - name: Deploy WAR on Tomcat
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "=== Stopping Tomcat ==="
+            sudo systemctl stop tomcat10 || true
+
+            echo "=== Removing old deployment ==="
+            sudo rm -rf /var/lib/tomcat10/webapps/ROOT
+            sudo rm -f /var/lib/tomcat10/webapps/ROOT.war
+
+            echo "=== Copying new WAR ==="
+            sudo cp /tmp/ROOT.war /var/lib/tomcat10/webapps/ROOT.war
+            sudo chown tomcat:tomcat /var/lib/tomcat10/webapps/ROOT.war
+            sudo chmod 644 /var/lib/tomcat10/webapps/ROOT.war
+
+            echo "=== Starting Tomcat ==="
+            sudo systemctl start tomcat10
+
+            echo "=== Deployment complete. Waiting for startup... ==="
+            sleep 20
+
+            echo "=== Checking Tomcat status ==="
+            sudo systemctl status tomcat10 --no-pager
+
+            echo "=== Verifying deployment in webapps ==="
+            ls -lh /var/lib/tomcat10/webapps/
+:wq:%wq
+
