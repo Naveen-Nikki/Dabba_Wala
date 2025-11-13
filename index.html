@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dabba Wala — Fresh & Organic (Zepto-style)</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">Dabba Wala</div>
+  <nav>
+    <a href="#" id="homeLink">Home</a>
+    <a href="#" id="categoriesLink">Categories</a>
+    <a href="#" id="cartLink">Cart (<span id="cartCount">0</span>)</a>
+  </nav>
+</header>
+
+<main class="container" id="app">
+  <section id="hero" class="hero">
+    <div class="hero-text">
+      <h1>100% Fresh & Organic — Direct from Local Farmers</h1>
+      <p>Fast delivery, farm-fresh produce: fruits, vegetables, dairy, meat & more.</p>
+      <div class="hero-cta">
+        <button id="shopNow" class="btn">Shop Now</button>
+        <button id="viewOffers" class="btn outline">View Offers</button>
+      </div>
+    </div>
+    <div class="hero-image"><img src="images/apple.svg" alt="Fresh"></div>
+  </section>
+
+  <section id="categories" class="categories-section">
+    <h2>Categories</h2>
+    <div class="categories" id="categoriesList"></div>
+  </section>
+
+  <section id="products" class="products-section">
+    <h2 id="productsTitle">Popular Items</h2>
+    <div class="products" id="productsGrid"></div>
+  </section>
+
+  <section id="checkoutArea" class="hidden">
+    <h2>Checkout</h2>
+    <div class="checkout-grid">
+      <div>
+        <h3>Delivery Address</h3>
+        <textarea id="addressInput" placeholder="Type your delivery address"></textarea>
+        <div class="input-row">
+          <button id="voiceBtn" class="btn small">🎤 Speak Address</button>
+          <label class="file-btn btn small">📷 Upload Photo
+            <input id="photoInput" type="file" accept="image/*" />
+          </label>
+          <button id="drawBtn" class="btn small">✍️ Handwrite Note</button>
+        </div>
+        <div id="photoPreview"></div>
+      </div>
+      <div>
+        <h3>Payment</h3>
+        <select id="paymentSelect">
+          <option value="cod">Cash on Delivery (COD)</option>
+          <option value="card">Credit / Debit Card</option>
+          <option value="upi">UPI</option>
+        </select>
+        <h3>Order Summary</h3>
+        <div id="orderSummary"></div>
+        <button id="placeOrderBtn" class="btn">Place Order</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="trackingArea" class="hidden">
+    <h2>Order Tracking</h2>
+    <div id="trackingInfo"></div>
+  </section>
+
+  <footer>
+    <p>© Dabba Wala — Farm Fresh. For demo only.</p>
+  </footer>
+
+  <!-- Handwrite modal -->
+  <div id="drawModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Write a note / draw address</h3>
+      <canvas id="drawCanvas" width="600" height="300"></canvas>
+      <div class="modal-actions">
+        <button id="saveDraw" class="btn">Save</button>
+        <button id="clearDraw" class="btn outline">Clear</button>
+        <button id="closeDraw" class="btn outline">Close</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
