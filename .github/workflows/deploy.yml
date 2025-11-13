@@ -1,4 +1,4 @@
-name: CI/CD Deploy Java App to Tomcat10 on EC2
+ name: CI/CD Deploy Java App to Tomcat10 on EC2
 
 # Trigger deployment on push to master branch
 on:
@@ -80,4 +80,3 @@ jobs:
 
             echo "=== Verifying deployment in webapps ==="
             ls -lh /var/lib/tomcat10/webapps/
-
